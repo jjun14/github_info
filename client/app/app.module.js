@@ -66,11 +66,11 @@
     }
 
     function requestUserInfo(username, callback){
-      console.log('in the factory setting data');
+      console.log(username);
       var userProfilePromise = requestProfile(username);
       var userReposPromise = requestRepos(username);
       $q.all([userProfilePromise, userReposPromise]).then(function(data){
-        userProfile = data[0];
+        userProfile = data[0].data;
         userRepos = data[1];
         callback();
       });
@@ -93,8 +93,10 @@
   searchController.$inject = ['githubFactory', '$q', '$state'];
 
   function searchController(githubFactory, $q, $state){
-    var vm = this;
-    vm.getUserInfo = function(user){
+    var search = this;
+
+    search.getUserInfo = function(user){
+      console.log(user);
       githubFactory.requestUserInfo(user.username, function(){
         $state.go('index.user', {username: user.username}, {reload: true});
       });
@@ -109,16 +111,15 @@
   profileController.$inject = ['githubFactory'];
 
   function profileController(githubFactory){
-    var vm = this;
+    var profile = this;
 
     init();
 
     function init(){
       githubFactory.getUserProfile(function(data){
-        console.log(data);
-        vm.profile = data;
+        profile.userProfile = data;
+        console.log(profile.userProfile);
       });
     }
   }
-
 })();
