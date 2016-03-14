@@ -1,4 +1,8 @@
-<div class=col-sm-4>
-  <h2>Repos</h2>
-</div>
+<h2>Repos</h2>
+  {{ userRepos }}
+<ul class="list-group">
+  <li ng-repeat='repo in repos.userRepos' class="list-group-item">
+    <a nghref="{{ repo.url }}" target="_blank">{{ repo.name }}</a>
+  </li>
+</ul>
 

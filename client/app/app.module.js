@@ -26,7 +26,8 @@
                 controller: "profileController as profile"
               },
               "repos": {
-                templateUrl: "partials/user.repos.html"
+                templateUrl: "partials/user.repos.html",
+                controller: "reposController as repos"
               },
               "notes": {
                 templateUrl: "partials/user.notes.html"
@@ -71,7 +72,7 @@
       var userReposPromise = requestRepos(username);
       $q.all([userProfilePromise, userReposPromise]).then(function(data){
         userProfile = data[0].data;
-        userRepos = data[1];
+        userRepos = data[1].data;
         callback();
       });
     }
