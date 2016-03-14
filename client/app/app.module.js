@@ -115,6 +115,7 @@
 
     function init(){
       githubFactory.getUserProfile(function(data){
+        console.log(data);
         vm.profile = data;
       });
     }
