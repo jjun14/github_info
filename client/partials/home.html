@@ -1,0 +1,15 @@
+<div class="row">
+  <form>
+    <div class="col-sm-4 col-sm-offset-2 form-group">
+      <input type="text" class="search-query form-control" placeholder="Search" ng-model="user.username" />
+    </div>
+    <div class="col-sm-3 form-group">
+      <button class="btn btn-block btn-primary" ng-click="search.getUserInfo(user)">Search Github</button>
+    </div>
+  </form>
+</div>
+<div class="row">
+  <div ui-view="profile"></div>
+  <div ui-view="repos"></div>
+  <div ui-view="notes"></div>
+</div>
