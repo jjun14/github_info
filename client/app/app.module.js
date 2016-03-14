@@ -10,11 +10,11 @@
   angular
     .module('github-notetaker')
     .config(function($stateProvider, $urlRouterProvider){
-      $urlRouterProvider.otherwise("/index");
+      $urlRouterProvider.otherwise("");
 
       $stateProvider
         .state('index', {
-          url: "/index",
+          url: "",
           templateUrl: "partials/home.html",
           controller: "searchController as search"
         })
@@ -22,14 +22,14 @@
             url:'/user/:username',
             views: {
               "profile": {
-                templateUrl: "partials/index.user.profile.html",
+                templateUrl: "partials/user.profile.html",
                 controller: "profileController as profile"
               },
               "repos": {
-                templateUrl: "partials/index.user.repos.html"
+                templateUrl: "partials/user.repos.html"
               },
               "notes": {
-                templateUrl: "partials/index.user.notes.html"
+                templateUrl: "partials/user.notes.html"
               }
             }
           })
@@ -96,7 +96,7 @@
     var vm = this;
     vm.getUserInfo = function(user){
       githubFactory.requestUserInfo(user.username, function(){
-        $state.go('index.user');
+        $state.go('index.user', {username: user.username}, {reload: true});
       });
     }
   }
