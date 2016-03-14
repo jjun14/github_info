@@ -22,7 +22,8 @@
             url:'/user/:username',
             views: {
               "profile": {
-                templateUrl: "partials/index.user.profile.html"
+                templateUrl: "partials/index.user.profile.html",
+                controller: "profileController as profile"
               },
               "repos": {
                 templateUrl: "partials/index.user.repos.html"
@@ -38,31 +39,49 @@
     .module('github-notetaker')
     .factory('githubFactory', githubFactory);
 
-  githubFactory.$inject = ['$http']
+  githubFactory.$inject = ['$http', '$q'];
 
-  function githubFactory($http){
-    var userInfo = {};
+  function githubFactory($http, $q){
+    var userProfile = {};
     var userRepos = {};
     var factory = {
-      getUserInfo:  getUserInfo,
+      requestUserInfo:  requestUserInfo,
+      getUserProfile: getUserProfile,
       getUserRepos: getUserRepos
     }
 
     return factory;
 
-    function getUserInfo(username){
-      console.log('retrieving info in the factory');
+    function requestProfile(username){
       var client_id = 'cc7a572cd3b2246c3270';
       var client_secret = '03577191232b7c4d755d63c3d0d652ac46616c37'
       // request to grab user profile
-      return $http.get("https://api.github.com/users/"+username+"?client_id=+"+client_id+"&client_secret="+client_secret)
+      return $http.get("https://api.github.com/users/"+username+"?client_id="+client_id+"&client_secret="+client_secret)
     }
 
-    function getUserRepos(username){
-      console.log('here');
+    function requestRepos(username){
       var client_id = 'cc7a572cd3b2246c3270';
       var client_secret = '03577191232b7c4d755d63c3d0d652ac46616c37'
-      return $http.get("https://api.github.com/users/"+username+"/repos?client_id=+"+client_id+"&client_secret="+client_secret)
+      return $http.get("https://api.github.com/users/"+username+"/repos?client_id="+client_id+"&client_secret="+client_secret)
+    }
+
+    function requestUserInfo(username, callback){
+      console.log('in the factory setting data');
+      var userProfilePromise = requestProfile(username);
+      var userReposPromise = requestRepos(username);
+      $q.all([userProfilePromise, userReposPromise]).then(function(data){
+        userProfile = data[0];
+        userRepos = data[1];
+        callback();
+      });
+    }
+
+    function getUserProfile(callback){
+      callback(userProfile);
+    }
+
+    function getUserRepos(callback){
+      callback(userRepos);
     }
   }
 
@@ -71,16 +90,13 @@
     .module('github-notetaker')
     .controller('searchController', searchController);
 
-  searchController.$inject = ['githubFactory', '$q'];
+  searchController.$inject = ['githubFactory', '$q', '$state'];
 
-  function searchController(githubFactory, $q){
+  function searchController(githubFactory, $q, $state){
     var vm = this;
     vm.getUserInfo = function(user){
-      var userInfoPromise = githubFactory.getUserInfo(user.username);
-      var reposPromise = githubFactory.getUserRepos(user.username);
-      $q.all([userInfoPromise, reposPromise]).then(function(data){
-        vm.userInfo = data[0];
-        vm.userRepos = data[1];
+      githubFactory.requestUserInfo(user.username, function(){
+        $state.go('index.user');
       });
     }
   }
@@ -90,10 +106,18 @@
     .module('github-notetaker')
     .controller('profileController', profileController);
 
-  profileController.$inject = ['$stateParams'];
+  profileController.$inject = ['githubFactory'];
 
-  function profileController($stateParams){
+  function profileController(githubFactory){
+    var vm = this;
 
+    init();
+
+    function init(){
+      githubFactory.getUserProfile(function(data){
+        vm.profile = data;
+      });
+    }
   }
 
 })();
