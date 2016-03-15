@@ -130,9 +130,10 @@
     .module('github-notetaker')
     .controller('reposController', reposController);
 
-  reposController.$inject = ['githubFactory'];
+  reposController.$inject = ['githubFactory', '$state'];
 
-  function reposController(githubFactory){
+  function reposController(githubFactory, $state){
+    console.log($state.params);
     var repos = this;
 
     init();
@@ -176,7 +177,6 @@
   notesController.$inject = ['notesFactory', '$state']
 
   function notesController(notesFactory, $state){
-    console.log($state.params);
     var notes = this;
 
     init();
