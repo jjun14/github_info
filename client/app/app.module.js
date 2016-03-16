@@ -20,6 +20,20 @@
         })
           .state('index.user', {
             url:'/user/:username',
+            resolve: {
+              userProfile: function(githubFactory,$stateParams){
+                console.log('resolving');
+                return githubFactory.requestProfile($stateParams.username);
+              },
+              userRepos: function(githubFactory, $stateParams){
+                console.log('resolving second');
+                return githubFactory.requestRepos($stateParams.username);
+              },
+              userNotes: function(notesFactory, $stateParams){
+                console.log('resolving third');
+                return notesFactory.requestNotes($stateParams.username);
+              }
+            },
             views: {
               "profile": {
                 templateUrl: "partials/user.profile.html",
@@ -48,6 +62,8 @@
     var userRepos = {};
     var factory = {
       requestUserInfo:  requestUserInfo,
+      requestProfile: requestProfile,
+      requestRepos: requestRepos,
       getUserProfile: getUserProfile,
       getUserRepos: getUserRepos
     }
@@ -110,19 +126,19 @@
     .module('github-notetaker')
     .controller('profileController', profileController);
 
-  profileController.$inject = ['githubFactory'];
+  profileController.$inject = ['githubFactory', 'userProfile'];
 
-  function profileController(githubFactory){
+  function profileController(githubFactory, userProfile){
     var profile = this;
+    profile.userProfile = userProfile.data;
 
-    init();
-
-    function init(){
-      githubFactory.getUserProfile(function(data){
-        profile.userProfile = data;
-        console.log(profile.userProfile);
-      });
-    }
+    //init(); 
+    //function init(){
+    //  githubFactory.getUserProfile(function(data){
+    //    profile.userProfile = data;
+    //    console.log(profile.userProfile);
+    //  });
+    //}
   }
 
   // repos controller
@@ -130,20 +146,21 @@
     .module('github-notetaker')
     .controller('reposController', reposController);
 
-  reposController.$inject = ['githubFactory', '$state'];
+  reposController.$inject = ['githubFactory', '$state', 'userRepos'];
 
-  function reposController(githubFactory, $state){
-    console.log($state.params);
+  function reposController(githubFactory, $state, userRepos){
+   // console.log($state.params);
     var repos = this;
+    repos.userRepos = userRepos.data;
 
-    init();
+    //init();
 
-    function init(){
-      githubFactory.getUserRepos(function(data){
-        repos.userRepos = data;
-        console.log(repos.userRepos);
-      })
-    }
+    //function init(){
+    //  githubFactory.getUserRepos(function(data){
+    //    repos.userRepos = data;
+    //    console.log(repos.userRepos);
+    //  })
+    //}
   }
 
   // notes factory
@@ -156,16 +173,17 @@
   function notesFactory($http){
     var notes = [];
     var factory = {
-      getNotesForUser: getNotesForUser
+      requestNotes: requestNotes
     }
 
     return factory;
 
-    function getNotesForUser(username, callback){
-      $http.get('/notes/'+username).success(function(data){
-        notes = data;
-        callback(notes);
-      });
+    function requestNotes(username){
+      return $http.get('/notes/'+username)
+      //$http.get('/notes/'+username).success(function(data){
+      //  notes = data;
+      //  callback(notes);
+      //});
     }
   }
 
@@ -174,18 +192,20 @@
     .module('github-notetaker')
     .controller('notesController', notesController);
 
-  notesController.$inject = ['notesFactory', '$state']
+  notesController.$inject = ['notesFactory', '$state', 'userNotes']
 
-  function notesController(notesFactory, $state){
+  function notesController(notesFactory, $state, userNotes){
     var notes = this;
+    notes.userNotes = userNotes.data;
+    console.log(notes.userNotes);
 
-    init();
+    //init();
 
-    function init(){
-      notesFactory.getNotesForUser($state.params.username, function(data){
-        notes.userNotes = data;
-        console.log(notes.userNotes);
-      })
-    }
+    //function init(){
+    //  notesFactory.getNotesForUser($state.params.username, function(data){
+    //    notes.userNotes = data;
+    //    console.log(notes.userNotes);
+    //  })
+    //}
   }
 })();
