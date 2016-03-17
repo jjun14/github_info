@@ -113,12 +113,11 @@
     .module('github-notetaker')
     .controller('searchController', searchController);
 
-  searchController.$inject = ['githubFactory', '$q', '$state'];
+  searchController.$inject = ['$scope', 'githubFactory', '$state'];
 
-  function searchController(githubFactory, $q, $state){
-    var search = this;
+  function searchController($scope, githubFactory, $state){
 
-    search.getUserInfo = function(user){
+    $scope.getUserInfo = function(user){
       console.log(user);
       githubFactory.requestUserInfo(user.username, function(){
         $state.go('index.user', {username: user.username}, {reload: true});
@@ -131,11 +130,10 @@
     .module('github-notetaker')
     .controller('profileController', profileController);
 
-  profileController.$inject = ['githubFactory', 'userProfile'];
+  profileController.$inject = ['$scope', 'githubFactory', 'userProfile'];
 
-  function profileController(githubFactory, userProfile){
-    var profile = this;
-    profile.userProfile = userProfile.data;
+  function profileController($scope, githubFactory, userProfile){
+    $scope.userProfile = userProfile.data;
 
     //init(); 
     //function init(){
@@ -151,12 +149,11 @@
     .module('github-notetaker')
     .controller('reposController', reposController);
 
-  reposController.$inject = ['githubFactory', '$state', 'userRepos'];
+  reposController.$inject = ['$scope', 'githubFactory', '$state', 'userRepos'];
 
-  function reposController(githubFactory, $state, userRepos){
+  function reposController($scope, githubFactory, $state, userRepos){
    // console.log($state.params);
-    var repos = this;
-    repos.userRepos = userRepos.data;
+    $scope.userRepos = userRepos.data;
 
     //init();
 
@@ -202,14 +199,12 @@
     .module('github-notetaker')
     .controller('notesController', notesController);
 
-  notesController.$inject = ['notesFactory', '$state', 'userNotes']
+  notesController.$inject = ['$scope', 'notesFactory', '$state', 'userNotes']
 
-  function notesController(notesFactory, $state, userNotes){
-    var notes = this;
-    notes.userNotes = userNotes.data;
-    console.log(notes.userNotes);
+  function notesController($scope, notesFactory, $state, userNotes){
+    $scope.userNotes = userNotes.data;
 
-    notes.addNote = function(newNote){
+    $scope.addNote = function(newNote){
       console.log("adding note!");
       newNote.username = $state.params.username;
       notesFactory.addNote(newNote).then(function(res){

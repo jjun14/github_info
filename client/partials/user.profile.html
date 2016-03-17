@@ -1,19 +1,19 @@
-<h2>{{ profile.userProfile.login }}'s Profile</h2>
+<h2>{{ userProfile.login }}'s Profile</h2>
 <ul class='list-group'>
-  <li class='list-group-item' ng-if="profile.userProfile.avatar_url">
-    <img ng-src="{{ profile.userProfile.avatar_url }}">
+  <li class='list-group-item' ng-if="userProfile.avatar_url">
+    <img ng-src="{{ userProfile.avatar_url }}">
   </li>
-  <li class="list-group-item" ng-if="profile.userProfile.blog">{{ profile.userProfile.blog }}</li>
-  <li class="list-group-item" ng-if="profile.userProfile.followers">
-    Followers<span class='badge'>{{profile.userProfile.followers }}</span>
+  <li class="list-group-item" ng-if="userProfile.blog">{{ userProfile.blog }}</li>
+  <li class="list-group-item" ng-if="userProfile.followers">
+    Followers<span class='badge'>{{userProfile.followers }}</span>
   </li>
-  <li class="list-group-item" ng-if="profile.userProfile.following >= 0">
-    Following<span class='badge'>{{profile.userProfile.following }}</span>
+  <li class="list-group-item" ng-if="userProfile.following >= 0">
+    Following<span class='badge'>{{userProfile.following }}</span>
   </li>
-  <li class="list-group-item" ng-if="profile.userProfile.public_repos >= 0">
-    Public Repos<span class='badge'>{{profile.userProfile.public_repos }}</span>
+  <li class="list-group-item" ng-if="userProfile.public_repos >= 0">
+    Public Repos<span class='badge'>{{userProfile.public_repos }}</span>
   </li>
-  <li class="list-group-item" ng-if="profile.userProfile.url">
-    <a href="{{profile.userProfile.url}}" target="_blank">Visit on Github</a>
+  <li class="list-group-item" ng-if="userProfile.url">
+    <a href="{{userProfile.url}}" target="_blank">Visit on Github</a>
   </li>
 </ul>

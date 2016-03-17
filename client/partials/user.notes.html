@@ -7,10 +7,10 @@
     </div>
     <div ui-view="" class="row">
       <div>
-        <ul class="list-group" ng-if="notes.userNotes.length > 0">
-          <li class="list-group-item" ng-repeat="note in notes.userNotes">{{note.content}}</li>
+        <ul class="list-group" ng-if="userNotes.length > 0">
+          <li class="list-group-item" ng-repeat="note in userNotes">{{note.content}}</li>
         </ul>
-        <h4 ng-if="notes.userNotes.length == 0">No notes!</h4>
+        <h4 ng-if="userNotes.length == 0">No notes!</h4>
       </div>
     </div>
   </div>
