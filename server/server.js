@@ -27,9 +27,12 @@ app.get('/notes/:username', function(req, res){
 })
 
 app.post('/notes', function(req, res){
-  db.none("INSERT INTO notes(username, content) values($1, $2)", [req.body.username, req.body.content])
-    .then(function(){
+  console.log("CREATING A NOTE!");
+  db.one("INSERT INTO notes(username, content) values($1, $2) returning *", [req.body.username, req.body.content])
+    .then(function(data){
       console.log('inserted note');
+      console.log(data);
+      res.json(data);
     })
 })
 

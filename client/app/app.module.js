@@ -16,7 +16,7 @@
         .state('index', {
           url: "",
           templateUrl: "partials/home.html",
-          controller: "searchController as search"
+          controller: "searchController"
         })
           .state('index.user', {
             url:'/user/:username',
@@ -119,9 +119,11 @@
 
     $scope.getUserInfo = function(user){
       console.log(user);
-      githubFactory.requestUserInfo(user.username, function(){
-        $state.go('index.user', {username: user.username}, {reload: true});
-      });
+      if(user){
+        githubFactory.requestUserInfo(user.username, function(){
+          $state.go('index.user', {username: user.username}, {reload: true});
+        });
+      }
     }
   }
   
@@ -165,14 +167,33 @@
     //}
   }
 
+  // broadcast service
+  angular
+    .module('github-notetaker')
+    .factory('broadcastService', broadcastService)
+
+  broadcastService.$inject = ['$rootScope']
+
+  function broadcastService($rootScope){
+    var factory = {
+      send: send
+    }
+
+    return factory;
+
+    function send(msg, data){
+      $rootScope.$broadcast(msg, data);
+    }
+  }
+
   // notes factory
   angular
     .module('github-notetaker')
     .factory('notesFactory', notesFactory);
 
-  notesFactory.$inject = ['$http'];
+  notesFactory.$inject = ['$http', 'broadcastService'];
 
-  function notesFactory($http){
+  function notesFactory($http, broadcastService){
     var notes = [];
     var factory = {
       requestNotes: requestNotes,
@@ -189,8 +210,13 @@
       //});
     }
 
-    function addNote(data){
-      return $http.post('/notes', data);
+    function addNote(data, callback){
+      console.log('here');
+      $http.post('/notes', data).success(function(res){
+        console.log('added new note and broadcasting');
+        broadcastService.send('newNote', res);
+        callback();
+      })
     }
   }
 
@@ -202,16 +228,21 @@
   notesController.$inject = ['$scope', 'notesFactory', '$state', 'userNotes']
 
   function notesController($scope, notesFactory, $state, userNotes){
+    $scope.form = {};
     $scope.userNotes = userNotes.data;
+
+    $scope.$on('newNote', function(event, args){
+      console.log('got the broadcast!');
+      $scope.userNotes.push(args);
+    })
 
     $scope.addNote = function(newNote){
       console.log("adding note!");
       newNote.username = $state.params.username;
-      notesFactory.addNote(newNote).then(function(res){
-        console.log('returned');
-      })
+      notesFactory.addNote(newNote, function(){
+        console.log('finished adding note!');
+      });
     }
-
     //init();
 
     //function init(){

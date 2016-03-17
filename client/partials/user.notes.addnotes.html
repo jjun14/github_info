@@ -1,9 +1,9 @@
 <h3>Write a Note</h3>
 <label for='note'>Content</label>
-<form ng-submit=(notes.addNote(newNote))>
+<form ng-submit="addNote(newNote)" name="form.addNoteForm">
   <div class="input-group">
-    <input type="text" name="note" id="note" class="form-control" ng-model="newNote.content">
-    <span class="input-group-addon btn-success" ng-click="notes.addNote(newNote)">
+    <input type="text" id="note" class="form-control" ng-model="newNote.content">
+    <span class="input-group-addon btn-success" ng-click="addNote(newNote)">
       <i>+</i>
     </span>
   </div>
