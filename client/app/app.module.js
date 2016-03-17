@@ -49,6 +49,11 @@
               }
             }
           })
+          .state('index.user.addnote', {
+            url: '/addnote',
+            templateUrl: "partials/user.notes.addnotes.html",
+            contoller: 'notesConroller as notes'
+          })
     })
   // github factory
   angular
@@ -173,7 +178,8 @@
   function notesFactory($http){
     var notes = [];
     var factory = {
-      requestNotes: requestNotes
+      requestNotes: requestNotes,
+      addNote: addNote
     }
 
     return factory;
@@ -184,6 +190,10 @@
       //  notes = data;
       //  callback(notes);
       //});
+    }
+
+    function addNote(data){
+      return $http.post('/notes', data);
     }
   }
 
@@ -198,6 +208,14 @@
     var notes = this;
     notes.userNotes = userNotes.data;
     console.log(notes.userNotes);
+
+    notes.addNote = function(newNote){
+      console.log("adding note!");
+      newNote.username = $state.params.username;
+      notesFactory.addNote(newNote).then(function(res){
+        console.log('returned');
+      })
+    }
 
     //init();
 

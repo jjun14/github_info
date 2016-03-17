@@ -1,6 +1,17 @@
-<h2>Notes</h2>
-<ui-vew><ui-view>
-<ul class="list-group" ng-if="notes.userNotes.length > 0">
-  <li class="list-group-item" ng-repeat="note in notes.userNotes">{{note.content}}</li>
-</ul>
-<p ng-if="notes.userNotes.length == 0">No notes!</p>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="row">
+    <h2>Notes</h2>
+    <a ui-sref='index.user' ui-sref-opts="{reload: true}" class="btn btn-primary">All Notes</a>
+      <a ui-sref='.addnote' class="btn btn-primary">Write a Note</a>
+    </div>
+    <div ui-view="" class="row">
+      <div>
+        <ul class="list-group" ng-if="notes.userNotes.length > 0">
+          <li class="list-group-item" ng-repeat="note in notes.userNotes">{{note.content}}</li>
+        </ul>
+        <h4 ng-if="notes.userNotes.length == 0">No notes!</h4>
+      </div>
+    </div>
+  </div>
+</div>

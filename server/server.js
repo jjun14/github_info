@@ -4,6 +4,7 @@ var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "../client")));
 
 var pgp = require('pg-promise')({});
 var cn = {
@@ -15,14 +16,20 @@ var cn = {
 }
 var db = pgp(cn);
 
-app.use(express.static(path.join(__dirname, "../client")));
-
 app.get('/notes/:username', function(req, res){
+  console.log('here');
   console.log(req.params);
   db.any("SELECT * FROM notes WHERE username=$1", req.params.username)
     .then(function(data){
       console.log("DATA", data);
       res.json(data);
+    })
+})
+
+app.post('/notes', function(req, res){
+  db.none("INSERT INTO notes(username, content) values($1, $2)", [req.body.username, req.body.content])
+    .then(function(){
+      console.log('inserted note');
     })
 })
 
